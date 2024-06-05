@@ -1,12 +1,12 @@
 #ifndef __PICTURE_TRANSFER_PROTOCOL_INCLUDED_H__
 #define __PICTURE_TRANSFER_PROTOCOL_INCLUDED_H__
 
-#include "../usb/usb.h"
-#include "./src/association.h"
-#include "./src/dataset.h"
-#include "./src/object.h"
-#include "./src/storage.h"
+#include "../lib/usb/usb.h"
+#include "association.h"
+#include "dataset.h"
 #include "error.h"
+#include "object.h"
+#include "storage.h"
 #include <stdint.h>
 
 struct ptp_res_params {

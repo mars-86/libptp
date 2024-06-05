@@ -25,6 +25,7 @@ stamp-h1
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
