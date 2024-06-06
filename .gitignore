@@ -25,6 +25,7 @@ stamp-h1
 
 # Libraries
 lib/*
+!lib/README
 
 # Compiled Dynamic libraries
 *.so
