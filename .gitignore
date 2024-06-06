@@ -23,6 +23,9 @@ stamp-h1
 *.gch
 *.pch
 
+# Libraries
+lib/*
+
 # Compiled Dynamic libraries
 *.so
 *.so.*

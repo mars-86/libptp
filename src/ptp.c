@@ -1,4 +1,4 @@
-#include "../ptp.h"
+#include "ptp.h"
 #include "object.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -132,7 +132,7 @@ int ptp_get_device_info(ptp_dev_t* dev, uint8_t* data, uint32_t len, ptp_res_t* 
     __ptpcmd.ContaierLength = PTP_REQUEST_LEN(nparams);
     __ptpcmd.ContainerType = PTP_CONTAINER_TYPE_COMMAND_BLOCK;
     __ptpcmd.Code = PTP_REQUEST_GET_DEVICE_INFO;
-    __ptpcmd.TransacionID = __get_transaction_id();
+    __ptpcmd.TransacionID = 0; // __get_transaction_id();
 
 #ifdef __DEBUG
     printf("GET DEVICE INFO\n");
