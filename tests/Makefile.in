@@ -293,8 +293,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 main_out_SOURCES = main.c
-#main_out_LDADD = ../lib/usb/libusb.so ../src/.libs/libptp.so
-main_out_LDFLAGS = -L../lib/usb -lusb -L../src/.libs -lptp -Wl,-rpath,../lib/usb -Wl,-rpath,../src/.libs
+main_out_LDFLAGS = -L$(abs_top_builddir)/lib/usb -lusb -L$(abs_top_builddir)/src/.libs -lptp -Wl,-rpath,$(abs_top_builddir)/lib/usb -Wl,-rpath,$(abs_top_builddir)/src/.libs
 all: all-am
 
 .SUFFIXES:
@@ -632,7 +631,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-# main_out_LDFLAGS = -L../lib/usb -lusb -L../src/.libs -lptp -Wl,-rpath,../lib/usb -Wl,-rpath,../src/.libs
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

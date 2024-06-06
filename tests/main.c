@@ -28,6 +28,23 @@ int main(void)
     dev.endp_out_max_pack_size = 512;
 
     int status;
+
+    if ((status = ptp_open_session(&dev, 1, &res)) < 0) {
+        printf("ERROR\n");
+        close(fd);
+        return 1;
+    }
+
+    if (res.code != PTP_RESPONSE_OK) {
+        printf("%s\n", ptp_get_error(res.code));
+        close(fd);
+        return 1;
+    }
+
+    printf("%d\n", status);
+    printf("%X\n", res.code);
+    printf("%d\n", res.length);
+
     if ((status = ptp_get_device_info(&dev, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
         close(fd);
