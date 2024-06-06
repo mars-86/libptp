@@ -24,7 +24,7 @@ stamp-h1
 *.pch
 
 # Libraries
-lib/*
+lib/
 !lib/README
 
 # Compiled Dynamic libraries
