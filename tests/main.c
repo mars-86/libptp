@@ -1,4 +1,5 @@
 #include "../src/ptp.h"
+#include "assert.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -27,6 +28,8 @@ int main(void)
     dev.endp_in_max_pack_size = 512;
     dev.endp_out_max_pack_size = 512;
 
+    ASSERT_TEST_INIT();
+
     int status;
 
     if ((status = ptp_open_session(&dev, 1, &res)) < 0) {
@@ -41,9 +44,7 @@ int main(void)
         return 1;
     }
 
-    printf("%d\n", status);
-    printf("%X\n", res.code);
-    printf("%d\n", res.length);
+    ASSERT_EXPR(res.code == PTP_RESPONSE_OK);
 
     if ((status = ptp_get_device_info(&dev, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
@@ -57,15 +58,16 @@ int main(void)
         return 1;
     }
 
-    printf("%d\n", status);
-    printf("%X\n", res.code);
-    printf("%d\n", res.length);
+    ASSERT_EXPR(res.code == PTP_RESPONSE_OK);
+    ASSERT_NUM_VAL(res.length, 553);
 
     close(fd);
     for (int i = 0; i < res.length; ++i)
         printf("%.2X", buffer[i]);
     // putc(buffer[i], stdout);
     putc('\n', stdout);
+
+    ASSERT_TEST_SUMMARY();
 
     return 0;
 }
