@@ -13,11 +13,11 @@ struct device_info {
     uint16_t VendorExtensionVersion;
     char* VendorExtensionDesc;
     uint16_t FunctionalMode;
-    uint8_t* OperationsSupported;
-    uint8_t* EventsSupported;
-    uint8_t* DevicePropertiesSupported;
+    uint16_t* OperationsSupported;
+    uint16_t* EventsSupported;
+    uint16_t* DevicePropertiesSupported;
     uint8_t* CaptureFormats;
-    uint8_t* ImageFormats;
+    uint32_t* ImageFormats;
     char* Manufacturer;
     char* Model;
     char* DeviceVersion;
