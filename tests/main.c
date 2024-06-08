@@ -83,6 +83,10 @@ int main(void)
         printf("%c", buffer[i]);
     putc('\n', stdout);
 
+    for (int i = 21; i < 21 + (0x77 * 2); ++i)
+        printf("%.2X", buffer[i]);
+    putc('\n', stdout);
+
     for (int i = 259; i < 261; ++i)
         printf("%c", buffer[i]);
     putc('\n', stdout);
