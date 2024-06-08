@@ -15,11 +15,11 @@ struct device_info {
     uint16_t VendorExtensionVersion;
     ptp_string_t VendorExtensionDesc;
     uint16_t FunctionalMode;
-    uint16_t* OperationsSupported;
-    uint16_t* EventsSupported;
-    uint16_t* DevicePropertiesSupported;
-    uint8_t* CaptureFormats;
-    uint32_t* ImageFormats;
+    ptp_array_t OperationsSupported;
+    ptp_array_t EventsSupported;
+    ptp_array_t DevicePropertiesSupported;
+    ptp_array_t CaptureFormats;
+    ptp_array_t ImageFormats;
     ptp_string_t Manufacturer;
     ptp_string_t Model;
     ptp_string_t DeviceVersion;

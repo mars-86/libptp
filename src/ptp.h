@@ -7,6 +7,7 @@
 #include "error.h"
 #include "object.h"
 #include "storage.h"
+#include "types.h"
 #include <stdint.h>
 
 struct ptp_res_params {
