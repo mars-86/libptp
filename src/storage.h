@@ -2,17 +2,7 @@
 #define __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
 
 #include <stdint.h>
-
-struct storage_info {
-    uint16_t StorageType;
-    uint16_t FilesystemType;
-    uint16_t AccessCapability;
-    uint64_t MaxCapacity;
-    uint64_t FreeSpaceInBytes;
-    uint32_t FreeSpaceInImages;
-    char* StorageDescription;
-    char* VolumeLabel;
-} __attribute__((packed));
+#include <stdio.h>
 
 #define PTP_STORAGE_TYPE_UNDEFINED 0x0000
 #define PTP_STORAGE_TYPE_FIXED_ROM 0x0001
@@ -39,5 +29,20 @@ struct storage_info {
 #define PTP_STORAGE_ID_UNUSED 0x00000000
 #define PTP_STORAGE_HANDLE_ROOT 0xFFFFFFFF
 #define PTP_STORAGE_HANDLE_UNUSED 0x00000000
+
+struct storage_info {
+    uint16_t StorageType;
+    uint16_t FilesystemType;
+    uint16_t AccessCapability;
+    uint64_t MaxCapacity;
+    uint64_t FreeSpaceInBytes;
+    uint32_t FreeSpaceInImages;
+    char* StorageDescription;
+    char* VolumeLabel;
+} __attribute__((packed));
+
+struct storage_info* alloc_storage_info(const uint8_t* stream, size_t len);
+
+void free_storage_info(const struct storage_info* storage_info);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__

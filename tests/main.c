@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define DEV_USB_DIR "/dev/bus/usb"
-#define DEVICE "024"
+#define DEVICE "025"
 
 int main(void)
 {
@@ -61,71 +61,131 @@ int main(void)
 
     ASSERT_EXPR(res.code == PTP_RESPONSE_OK);
     ASSERT_NUM_VAL(res.length, 553);
+    /*
+        for (int i = 0; i < res.length; ++i)
+            printf("%.2X", buffer[i]);
+        // putc(buffer[i], stdout);
+        putc('\n', stdout);
 
-    for (int i = 0; i < res.length; ++i)
-        printf("%.2X", buffer[i]);
-    // putc(buffer[i], stdout);
+        for (int i = 12; i < 14; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 14; i < 18; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 18; i < 20; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 21; i < 259; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 21; i < 21 + (0x77 * 2); ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 259; i < 261; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 265; i < 341; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 345; i < 355; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 359; i < 369; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 377; i < 417; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 418; i < 479; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 479; i < 498; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 498; i < 526; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 527; i < 553; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 0; i < 300; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+    */
+    struct device_info* di = alloc_device_info(buffer, res.length);
+
+    printf("%.4X\n", di->StandardVersion);
+    printf("%.8X\n", di->VendorExtensionID);
+    printf("%.4X\n", di->VendorExtensionVersion);
+
+    for (int i = 0; i < di->VendorExtensionDesc.NumChars; ++i)
+        putc(di->VendorExtensionDesc.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 12; i < 14; ++i)
-        printf("%.2X", buffer[i]);
+    printf("%.4X\n", di->FunctionalMode);
+
+    for (int i = 0; i < di->OperationsSupported.NumElements; i++) {
+        uint16_t* __elem = (uint16_t*)di->OperationsSupported.ArrayEntry + i;
+        printf("%.4X", *__elem);
+    }
     putc('\n', stdout);
 
-    for (int i = 14; i < 18; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->EventsSupported.NumElements; i++) {
+        uint16_t* __elem = (uint16_t*)di->EventsSupported.ArrayEntry + i;
+        printf("%.4X", *__elem);
+    }
     putc('\n', stdout);
 
-    for (int i = 18; i < 20; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->DevicePropertiesSupported.NumElements; i++) {
+        uint16_t* __elem = (uint16_t*)di->DevicePropertiesSupported.ArrayEntry + i;
+        printf("%.4X", *__elem);
+    }
     putc('\n', stdout);
 
-    for (int i = 21; i < 259; ++i)
-        printf("%c", buffer[i]);
+    for (int i = 0; i < di->CaptureFormats.NumElements; i++) {
+        uint16_t* __elem = (uint16_t*)di->CaptureFormats.ArrayEntry + i;
+        printf("%.4X", *__elem);
+    }
     putc('\n', stdout);
 
-    for (int i = 21; i < 21 + (0x77 * 2); ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->ImageFormats.NumElements; i++) {
+        uint16_t* __elem = (uint16_t*)di->ImageFormats.ArrayEntry + i;
+        printf("%.4X", *__elem);
+    }
     putc('\n', stdout);
 
-    for (int i = 259; i < 261; ++i)
-        printf("%c", buffer[i]);
+    for (int i = 0; i < di->Manufacturer.NumChars; ++i)
+        putc(di->Manufacturer.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 265; i < 341; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->Model.NumChars; ++i)
+        putc(di->Model.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 345; i < 355; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->DeviceVersion.NumChars; ++i)
+        putc(di->DeviceVersion.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 359; i < 369; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < di->SerialNumber.NumChars; ++i)
+        putc(di->SerialNumber.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 377; i < 417; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 418; i < 479; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 479; i < 498; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 498; i < 526; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 527; i < 553; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 0; i < 300; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
+    free_device_info(di);
 
     if ((status = ptp_get_storage_id(&dev, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
