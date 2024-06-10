@@ -214,42 +214,61 @@ int main(void)
         close(fd);
         return 1;
     }
+    /*
+        for (int i = 12; i < 14; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
 
-    for (int i = 12; i < 14; ++i)
-        printf("%.2X", buffer[i]);
+        for (int i = 14; i < 16; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 16; i < 18; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 18; i < 26; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 26; i < 34; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 34; i < 38; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 38; i < 50; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 50; i < 84; ++i)
+            printf("%c", buffer[i]);
+        putc('\n', stdout);
+
+        for (int i = 0; i < res.length; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+    */
+    struct storage_info* si = alloc_storage_info(buffer, res.length);
+
+    printf("%.4X\n", si->StorageType);
+    printf("%.4X\n", si->FilesystemType);
+    printf("%.4X\n", si->AccessCapability);
+    printf("%.16lX\n", si->MaxCapacity);
+    printf("%.16lX\n", si->FreeSpaceInBytes);
+    printf("%.8X\n", si->FreeSpaceInImages);
+
+    for (int i = 0; i < si->StorageDescription.NumChars; ++i)
+        putc(si->StorageDescription.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 14; i < 16; ++i)
-        printf("%.2X", buffer[i]);
+    for (int i = 0; i < si->VolumeLabel.NumChars; ++i)
+        putc(si->VolumeLabel.StringChars[i], stdout);
     putc('\n', stdout);
 
-    for (int i = 16; i < 18; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 18; i < 26; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 26; i < 34; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 34; i < 38; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 38; i < 50; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 50; i < 84; ++i)
-        printf("%c", buffer[i]);
-    putc('\n', stdout);
-
-    for (int i = 0; i < res.length; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
+    free_storage_info(si);
 
     if ((status = ptp_get_num_objects(&dev, 0x10001, 0, 0, &res, &rparams)) < 0) {
         printf("ERROR\n");

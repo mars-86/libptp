@@ -31,6 +31,8 @@
 #define PTP_STORAGE_HANDLE_ROOT 0xFFFFFFFF
 #define PTP_STORAGE_HANDLE_UNUSED 0x00000000
 
+typedef uint32_t storage_id;
+
 struct storage_info {
     uint16_t StorageType;
     uint16_t FilesystemType;
@@ -44,6 +46,10 @@ struct storage_info {
 
 struct storage_info* alloc_storage_info(const uint8_t* stream, size_t len);
 
-void free_storage_info(const struct storage_info* storage_info);
+void free_storage_info(const struct storage_info* si);
+
+ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len);
+
+void free_storage_id_array(ptp_array_t* sia);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
