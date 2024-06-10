@@ -1,6 +1,7 @@
 #ifndef __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
 #define __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
 
+#include "types.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -37,8 +38,8 @@ struct storage_info {
     uint64_t MaxCapacity;
     uint64_t FreeSpaceInBytes;
     uint32_t FreeSpaceInImages;
-    char* StorageDescription;
-    char* VolumeLabel;
+    ptp_string_t StorageDescription;
+    ptp_string_t VolumeLabel;
 } __attribute__((packed));
 
 struct storage_info* alloc_storage_info(const uint8_t* stream, size_t len);
