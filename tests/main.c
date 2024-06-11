@@ -61,72 +61,7 @@ int main(void)
 
     ASSERT_EXPR(res.code == PTP_RESPONSE_OK);
     ASSERT_NUM_VAL(res.length, 553);
-    /*
-        for (int i = 0; i < res.length; ++i)
-            printf("%.2X", buffer[i]);
-        // putc(buffer[i], stdout);
-        putc('\n', stdout);
 
-        for (int i = 12; i < 14; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 14; i < 18; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 18; i < 20; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 21; i < 259; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 21; i < 21 + (0x77 * 2); ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 259; i < 261; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 265; i < 341; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 345; i < 355; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 359; i < 369; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 377; i < 417; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 418; i < 479; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 479; i < 498; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 498; i < 526; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 527; i < 553; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 0; i < 300; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-    */
     struct device_info* di = alloc_device_info(buffer);
 
     printf("%.4X\n", di->StandardVersion);
@@ -201,9 +136,15 @@ int main(void)
 
     ptp_array_t* stid = alloc_storage_id_array(buffer, res.length);
 
+    ptp_storage_id_t store_id;
     for (int i = 0; i < stid->NumElements; ++i) {
-        storage_id* sid = (storage_id*)stid->ArrayEntry + i;
-        printf("%.8X\n", *sid);
+        ptp_storage_id_t* sid = (ptp_storage_id_t*)stid->ArrayEntry + i;
+        printf("%.8X\n", ((sid->phisical_id) << 16) | (sid->logical_id));
+        if (sid->logical_id != 0) {
+            printf("PHISICAL ID: %.4X\n", sid->phisical_id);
+            printf("LOGICAL ID: %.4X\n", sid->logical_id);
+            memcpy(&store_id, sid, sizeof(ptp_storage_id_t));
+        }
     }
 
     free_storage_id_array(stid);
@@ -212,7 +153,7 @@ int main(void)
         printf("%.2X", buffer[i]);
     putc('\n', stdout);
 
-    if ((status = ptp_get_storage_info(&dev, 0x10001, buffer, 4096, &res)) < 0) {
+    if ((status = ptp_get_storage_info(&dev, ptp_build_storage_id(&store_id), buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;
@@ -223,43 +164,7 @@ int main(void)
         close(fd);
         return 1;
     }
-    /*
-        for (int i = 12; i < 14; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
 
-        for (int i = 14; i < 16; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 16; i < 18; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 18; i < 26; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 26; i < 34; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 34; i < 38; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 38; i < 50; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 50; i < 84; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-
-        for (int i = 0; i < res.length; ++i)
-            printf("%.2X", buffer[i]);
-        putc('\n', stdout);
-    */
     struct storage_info* si = alloc_storage_info(buffer);
 
     printf("%.4X\n", si->StorageType);
@@ -279,7 +184,7 @@ int main(void)
 
     free_storage_info(si);
 
-    if ((status = ptp_get_num_objects(&dev, 0x10001, 0, 0, &res, &rparams)) < 0) {
+    if ((status = ptp_get_num_objects(&dev, ptp_build_storage_id(&store_id), 0, 0, &res, &rparams)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;
@@ -293,7 +198,7 @@ int main(void)
 
     printf("NOBJS: %.2X\n", rparams.Parameter1);
 
-    if ((status = ptp_get_object_handles(&dev, 0x10001, 0, PTP_OBJECT_ASSOCIATION_ROOT, buffer, 4096, &res)) < 0) {
+    if ((status = ptp_get_object_handles(&dev, ptp_build_storage_id(&store_id), 0, PTP_OBJECT_ASSOCIATION_ROOT, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;
@@ -328,9 +233,47 @@ int main(void)
             return 1;
         }
 
+        struct object_info* oi = alloc_object_info(buffer);
+
+        printf("%.8X\n", oi->StorageID);
+        printf("%.4X\n", oi->ObjectFormat);
+        printf("%.4X\n", oi->ProtectionStatus);
+        printf("%.8X\n", oi->ObjectCompressedSize);
+        printf("%.4X\n", oi->ThumbFormat);
+        printf("%.8X\n", oi->ThumbCompressedSize);
+        printf("%.8X\n", oi->ThumbPixWidth);
+        printf("%.8X\n", oi->ThumbPixHeight);
+        printf("%.8X\n", oi->ImagePixWidth);
+        printf("%.8X\n", oi->ImagePixHeight);
+        printf("%.8X\n", oi->ImageBitDepth);
+        printf("%.8X\n", oi->ParentObject);
+        printf("%.4X\n", oi->AssociationType);
+        printf("%.8X\n", oi->AssociationDesc);
+        printf("%.8X\n", oi->SequenceNumber);
+
+        for (int i = 0; i < oi->Filename.NumChars; ++i)
+            putc(oi->Filename.StringChars[i], stdout);
+        putc('\n', stdout);
+
+        for (int i = 0; i < oi->CaptureDate.NumChars; ++i)
+            putc(oi->CaptureDate.StringChars[i], stdout);
+        putc('\n', stdout);
+
+        for (int i = 0; i < oi->ModificationDate.NumChars; ++i)
+            putc(oi->ModificationDate.StringChars[i], stdout);
+        putc('\n', stdout);
+
+        for (int i = 0; i < oi->Keywords.NumChars; ++i)
+            putc(oi->Keywords.StringChars[i], stdout);
+        putc('\n', stdout);
+
+        free_object_info(oi);
+
+        /*
         for (int i = 0; i < res.length; ++i)
             printf("%c", buffer[i]);
         putc('\n', stdout);
+        */
     }
 
     free_object_handle_array(obj_handles);

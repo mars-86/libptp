@@ -22,6 +22,20 @@ struct ptp_string {
 
 typedef struct ptp_string ptp_string_t;
 
+struct ptp_string_datetime {
+    uint8_t NumChars;
+    uint8_t YYYY[4]; // year
+    uint8_t MM[2]; // month
+    uint8_t DD[2]; // day
+    uint8_t T; // T
+    uint8_t hh[2]; // hour
+    uint8_t mm[2]; // min
+    uint8_t ss[4]; // sec + sec tenths (optional)
+    uint8_t TZ[5]; // timezone (optional)
+};
+
+typedef struct ptp_string_datetime ptp_string_datetime_t;
+
 struct ptp_array {
     uint32_t NumElements;
     void* ArrayEntry;
