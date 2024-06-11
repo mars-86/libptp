@@ -62,7 +62,7 @@ int main(void)
     ASSERT_EXPR(res.code == PTP_RESPONSE_OK);
     ASSERT_NUM_VAL(res.length, 553);
 
-    struct device_info* di = alloc_device_info(buffer);
+    struct device_info* di = ptp_alloc_device_info(buffer);
 
     printf("%.4X\n", di->StandardVersion);
     printf("%.8X\n", di->VendorExtensionID);
@@ -120,7 +120,7 @@ int main(void)
         putc(di->SerialNumber.StringChars[i], stdout);
     putc('\n', stdout);
 
-    free_device_info(di);
+    ptp_free_device_info(di);
 
     if ((status = ptp_get_storage_id(&dev, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");

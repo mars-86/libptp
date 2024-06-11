@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct device_info* alloc_device_info(const uint8_t* stream)
+struct device_info* ptp_alloc_device_info(const uint8_t* stream)
 {
     struct device_info* __di = (struct device_info*)malloc(sizeof(struct device_info));
 
@@ -66,11 +66,11 @@ struct device_info* alloc_device_info(const uint8_t* stream)
     return __di;
 
 err:
-    free_device_info(__di);
+    ptp_free_device_info(__di);
     return NULL;
 }
 
-void free_device_info(const struct device_info* di)
+void ptp_free_device_info(const struct device_info* di)
 {
     if (di->VendorExtensionDesc.StringChars)
         free(di->VendorExtensionDesc.StringChars);
