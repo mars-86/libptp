@@ -199,6 +199,15 @@ int main(void)
         return 1;
     }
 
+    ptp_array_t* stid = alloc_storage_id_array(buffer, res.length);
+
+    for (int i = 0; i < stid->NumElements; ++i) {
+        storage_id* sid = (storage_id*)stid->ArrayEntry + i;
+        printf("%.8X\n", *sid);
+    }
+
+    free_storage_id_array(stid);
+
     for (int i = 0; i < res.length; ++i)
         printf("%.2X", buffer[i]);
     putc('\n', stdout);
@@ -284,7 +293,7 @@ int main(void)
 
     printf("NOBJS: %.2X\n", rparams.Parameter1);
 
-    if ((status = ptp_get_object_handles(&dev, 0x10001, 0, 0xFFFFFFFF, buffer, 4096, &res)) < 0) {
+    if ((status = ptp_get_object_handles(&dev, 0x10001, 0, PTP_OBJECT_ASSOCIATION_ROOT, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;

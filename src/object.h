@@ -1,29 +1,9 @@
 #ifndef __PICTURE_TRANSFER_PROTOCOL_OBJECT_INCLUDED_H__
 #define __PICTURE_TRANSFER_PROTOCOL_OBJECT_INCLUDED_H__
 
+#include "types.h"
 #include <stdint.h>
-
-struct object_info {
-    uint32_t StorageID;
-    uint16_t ObjectFormat;
-    uint16_t ProtectionStatus;
-    uint32_t ObjectCompressedSize;
-    uint16_t ThumbFormat;
-    uint32_t ThumbCompressedSize;
-    uint32_t ThumbPixWidth;
-    uint32_t ThumbPixHeight;
-    uint32_t ImagePixWidth;
-    uint32_t ImagePixHeight;
-    uint32_t ImageBitDepth;
-    uint32_t ParentObject;
-    uint16_t AssociationType;
-    uint32_t AssociationDesc;
-    uint32_t SequenceNumber;
-    char* Filename;
-    char* CaptureDate;
-    char* ModificationDate;
-    char* Keywords;
-} __attribute__((packed));
+#include <stdio.h>
 
 struct object_info2 {
     uint32_t StorageID;
@@ -100,5 +80,31 @@ struct object_info2 {
 #define PTP_OBJECT_FORMAT_TIFF_IT 0x380E // I TIFF/IT Tag Image File Format for Information Technology (graphic arts)
 #define PTP_OBJECT_FORMAT_JP2 0x380F // I JP2 JPEG2000 Baseline File Format
 #define PTP_OBJECT_FORMAT_JPX 0x3810 // I JPX JPEG2000 Extended File Format
+
+struct object_info {
+    uint32_t StorageID;
+    uint16_t ObjectFormat;
+    uint16_t ProtectionStatus;
+    uint32_t ObjectCompressedSize;
+    uint16_t ThumbFormat;
+    uint32_t ThumbCompressedSize;
+    uint32_t ThumbPixWidth;
+    uint32_t ThumbPixHeight;
+    uint32_t ImagePixWidth;
+    uint32_t ImagePixHeight;
+    uint32_t ImageBitDepth;
+    uint32_t ParentObject;
+    uint16_t AssociationType;
+    uint32_t AssociationDesc;
+    uint32_t SequenceNumber;
+    char* Filename;
+    char* CaptureDate;
+    char* ModificationDate;
+    char* Keywords;
+} __attribute__((packed));
+
+ptp_array_t* alloc_object_array(const uint8_t* stream, size_t len);
+
+void free_object_array(const ptp_array_t* oa);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_OBJECT_INCLUDED_H__
