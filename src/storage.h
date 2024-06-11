@@ -38,8 +38,6 @@ struct ptp_storage_id {
 
 typedef struct ptp_storage_id ptp_storage_id_t;
 
-typedef uint32_t storage_id;
-
 struct storage_info {
     uint16_t StorageType;
     uint16_t FilesystemType;
@@ -54,6 +52,11 @@ struct storage_info {
 inline uint32_t ptp_build_storage_id(ptp_storage_id_t* sid)
 {
     return ((sid->phisical_id) << 16 | (sid->logical_id));
+}
+
+inline uint8_t ptp_has_storage_logical(ptp_storage_id_t* sid)
+{
+    return sid->logical_id != 0;
 }
 
 struct storage_info* alloc_storage_info(const uint8_t* stream);

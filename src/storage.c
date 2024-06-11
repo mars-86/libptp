@@ -55,15 +55,15 @@ ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len)
 
     int __st_offset = PTP_CONTAINER_DATA_OFFSET;
 
-    __sia->NumElements = (len - PTP_CONTAINER_DATA_OFFSET) / sizeof(storage_id);
-    __sia->ArrayEntry = (storage_id*)malloc(__sia->NumElements * sizeof(storage_id));
+    __sia->NumElements = (len - PTP_CONTAINER_DATA_OFFSET) / sizeof(ptp_storage_id_t);
+    __sia->ArrayEntry = (ptp_storage_id_t*)malloc(__sia->NumElements * sizeof(ptp_storage_id_t));
 
     if (!__sia->ArrayEntry) {
         free((ptp_array_t*)__sia);
         return NULL;
     }
 
-    memcpy(__sia->ArrayEntry, stream + __st_offset, __sia->NumElements * sizeof(storage_id));
+    memcpy(__sia->ArrayEntry, stream + __st_offset, __sia->NumElements * sizeof(ptp_storage_id_t));
 
     return __sia;
 }

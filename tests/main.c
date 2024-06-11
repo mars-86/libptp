@@ -140,7 +140,7 @@ int main(void)
     for (int i = 0; i < stid->NumElements; ++i) {
         ptp_storage_id_t* sid = (ptp_storage_id_t*)stid->ArrayEntry + i;
         printf("%.8X\n", ((sid->phisical_id) << 16) | (sid->logical_id));
-        if (sid->logical_id != 0) {
+        if (ptp_has_storage_logical(sid)) {
             printf("PHISICAL ID: %.4X\n", sid->phisical_id);
             printf("LOGICAL ID: %.4X\n", sid->logical_id);
             memcpy(&store_id, sid, sizeof(ptp_storage_id_t));
