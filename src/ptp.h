@@ -10,33 +10,6 @@
 #include "types.h"
 #include <stdint.h>
 
-struct ptp_res_params {
-    uint32_t Parameter1;
-    uint32_t Parameter2;
-    uint32_t Parameter3;
-};
-
-typedef struct ptp_res_params ptp_res_params_t;
-
-struct ptp_dev {
-    usb_dev_t fd;
-    uint8_t endp_in;
-    uint16_t endp_in_max_pack_size;
-    uint8_t endp_out;
-    uint16_t endp_out_max_pack_size;
-    uint8_t endp_int;
-    uint16_t endp_int_max_pack_size;
-};
-
-typedef struct ptp_dev ptp_dev_t;
-
-struct ptp_res {
-    uint32_t length;
-    uint16_t code;
-} __attribute__((packed));
-
-typedef struct ptp_res ptp_res_t;
-
 /* PTP Generic container types  */
 #define PTP_CONTAINER_TYPE_UNDEFINED 0
 #define PTP_CONTAINER_TYPE_COMMAND_BLOCK 1
@@ -111,6 +84,33 @@ typedef struct ptp_res ptp_res_t;
 #define PTP_RESPONSE_SESSION_ALREADY_OPEN 0x201E
 #define PTP_RESPONSE_TRANSACTION_CANCELLED 0x201F
 #define PTP_RESPONSE_SPECIFICATION_OF_DESTINATION_UNSUPPORTED 0x2020
+
+struct ptp_res_params {
+    uint32_t Parameter1;
+    uint32_t Parameter2;
+    uint32_t Parameter3;
+};
+
+typedef struct ptp_res_params ptp_res_params_t;
+
+struct ptp_dev {
+    usb_dev_t fd;
+    uint8_t endp_in;
+    uint16_t endp_in_max_pack_size;
+    uint8_t endp_out;
+    uint16_t endp_out_max_pack_size;
+    uint8_t endp_int;
+    uint16_t endp_int_max_pack_size;
+};
+
+typedef struct ptp_dev ptp_dev_t;
+
+struct ptp_res {
+    uint32_t length;
+    uint16_t code;
+} __attribute__((packed));
+
+typedef struct ptp_res ptp_res_t;
 
 /*
  * GetDeviceInfo

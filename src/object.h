@@ -99,11 +99,15 @@ struct object_info {
     uint16_t AssociationType;
     uint32_t AssociationDesc;
     uint32_t SequenceNumber;
-    ptp_string_t* Filename;
-    char* CaptureDate;
-    char* ModificationDate;
-    ptp_string_t* Keywords;
+    ptp_string_t Filename;
+    ptp_string_t CaptureDate;
+    ptp_string_t ModificationDate;
+    ptp_string_t Keywords;
 } __attribute__((packed));
+
+struct object_info* alloc_object_info(const uint8_t* stream);
+
+void free_object_info(const struct object_info* oi);
 
 ptp_array_t* alloc_object_handle_array(const uint8_t* stream, size_t len);
 
