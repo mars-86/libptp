@@ -130,7 +130,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libptp_la_LIBADD =
-am_libptp_la_OBJECTS = dataset.lo error.lo ptp.lo storage.lo
+am_libptp_la_OBJECTS = dataset.lo error.lo object.lo ptp.lo storage.lo
 libptp_la_OBJECTS = $(am_libptp_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -155,7 +155,8 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/dataset.Plo ./$(DEPDIR)/error.Plo \
-	./$(DEPDIR)/ptp.Plo ./$(DEPDIR)/storage.Plo
+	./$(DEPDIR)/object.Plo ./$(DEPDIR)/ptp.Plo \
+	./$(DEPDIR)/storage.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -323,7 +324,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libptp.la
-libptp_la_SOURCES = dataset.c error.c ptp.c storage.c
+libptp_la_SOURCES = dataset.c error.c object.c ptp.c storage.c
 include_HEADERS = association.h dataset.h error.h file_system.h helpers.h object.h ptp.h storage.h types.h
 libptp_la_LDFLAGS = -l:libusb.so -L../lib/usb
 all: all-am
@@ -406,6 +407,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dataset.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/object.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ptp.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/storage.Plo@am__quote@ # am--include-marker
 
@@ -592,6 +594,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/dataset.Plo
 	-rm -f ./$(DEPDIR)/error.Plo
+	-rm -f ./$(DEPDIR)/object.Plo
 	-rm -f ./$(DEPDIR)/ptp.Plo
 	-rm -f ./$(DEPDIR)/storage.Plo
 	-rm -f Makefile
@@ -641,6 +644,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/dataset.Plo
 	-rm -f ./$(DEPDIR)/error.Plo
+	-rm -f ./$(DEPDIR)/object.Plo
 	-rm -f ./$(DEPDIR)/ptp.Plo
 	-rm -f ./$(DEPDIR)/storage.Plo
 	-rm -f Makefile

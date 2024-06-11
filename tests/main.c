@@ -305,16 +305,18 @@ int main(void)
         return 1;
     }
 
-    for (int i = 13; i < res.length; i += 4)
-        printf("%.8X\n", ((buffer[i] << 24) | (buffer[i + 1] << 16) | (buffer[i + 2] << 8) | buffer[i + 3]));
-    putc('\n', stdout);
+    ptp_array_t* obj_handles = alloc_object_handle_array(buffer, res.length);
 
-    for (int i = 0; i < res.length; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
+    for (int i = 0; i < obj_handles->NumElements; ++i) {
+        ptp_object_handle* oh = (ptp_object_handle*)obj_handles->ArrayEntry + i;
+        printf("%.8X\n", *oh);
+    }
 
-    for (int i = 1; i < 13; ++i) {
-        if ((status = ptp_get_object_info(&dev, i, buffer, 4096, &res)) < 0) {
+    printf("%d\n", obj_handles->NumElements);
+
+    for (int i = 1; i < obj_handles->NumElements; ++i) {
+        ptp_object_handle* oh = (ptp_object_handle*)obj_handles->ArrayEntry + i;
+        if ((status = ptp_get_object_info(&dev, *oh, buffer, 4096, &res)) < 0) {
             printf("ERROR\n");
             close(fd);
             return 1;
@@ -331,21 +333,7 @@ int main(void)
         putc('\n', stdout);
     }
 
-    if ((status = ptp_get_object_info(&dev, 0x0A, buffer, 4096, &res)) < 0) {
-        printf("ERROR\n");
-        close(fd);
-        return 1;
-    }
-
-    if (res.code != PTP_RESPONSE_OK) {
-        printf("%s\n", ptp_get_error(res.code));
-        close(fd);
-        return 1;
-    }
-
-    for (int i = 0; i < res.length; ++i)
-        printf("%.2X", buffer[i]);
-    putc('\n', stdout);
+    free_object_handle_array(obj_handles);
 
     ptp_close_session(&dev, &res);
 

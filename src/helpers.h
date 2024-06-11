@@ -1,6 +1,8 @@
 #ifndef __PICTURE_TRANSFER_PROTOCOL_HELPERS_INCLUDED_H__
 #define __PICTURE_TRANSFER_PROTOCOL_HELPERS_INCLUDED_H__
 
+#include "types.h"
+
 #define ALLOC_STRING(di_prop, stream, offset, size)                                                       \
     do {                                                                                                  \
         if (!(di_prop.StringChars = (uint16_t*)malloc(*(stream + offset) * size)))                        \
