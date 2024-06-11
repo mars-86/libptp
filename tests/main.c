@@ -127,7 +127,7 @@ int main(void)
             printf("%.2X", buffer[i]);
         putc('\n', stdout);
     */
-    struct device_info* di = alloc_device_info(buffer, res.length);
+    struct device_info* di = alloc_device_info(buffer);
 
     printf("%.4X\n", di->StandardVersion);
     printf("%.8X\n", di->VendorExtensionID);
@@ -251,7 +251,7 @@ int main(void)
             printf("%.2X", buffer[i]);
         putc('\n', stdout);
     */
-    struct storage_info* si = alloc_storage_info(buffer, res.length);
+    struct storage_info* si = alloc_storage_info(buffer);
 
     printf("%.4X\n", si->StorageType);
     printf("%.4X\n", si->FilesystemType);

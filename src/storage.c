@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct storage_info* alloc_storage_info(const uint8_t* stream, size_t len)
+struct storage_info* alloc_storage_info(const uint8_t* stream)
 {
     struct storage_info* __si = (struct storage_info*)malloc(sizeof(struct storage_info));
 
@@ -44,4 +44,34 @@ void free_storage_info(const struct storage_info* si)
         free(si->VolumeLabel.StringChars);
 
     free((struct storage_info*)si);
+}
+
+ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len)
+{
+    ptp_array_t* __sia = (ptp_array_t*)malloc(sizeof(ptp_array_t));
+
+    if (!__sia)
+        return NULL;
+
+    int __st_offset = PTP_CONTAINER_DATA_OFFSET;
+
+    __sia->NumElements = (len - PTP_CONTAINER_DATA_OFFSET) / sizeof(storage_id);
+    __sia->ArrayEntry = (storage_id*)malloc(__sia->NumElements * sizeof(storage_id));
+
+    if (!__sia->ArrayEntry) {
+        free((ptp_array_t*)__sia);
+        return NULL;
+    }
+
+    memcpy(__sia->ArrayEntry, stream + __st_offset, __sia->NumElements * sizeof(storage_id));
+
+    return __sia;
+}
+
+void free_storage_id_array(const ptp_array_t* sia)
+{
+    if (sia->ArrayEntry)
+        free(sia->ArrayEntry);
+
+    free((ptp_array_t*)sia);
 }

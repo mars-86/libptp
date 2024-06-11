@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct device_info* alloc_device_info(const uint8_t* stream, size_t len)
+struct device_info* alloc_device_info(const uint8_t* stream)
 {
     struct device_info* __di = (struct device_info*)malloc(sizeof(struct device_info));
 

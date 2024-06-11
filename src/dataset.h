@@ -26,7 +26,7 @@ struct device_info {
     ptp_string_t SerialNumber;
 } __attribute__((packed));
 
-struct device_info* alloc_device_info(const uint8_t* stream, size_t len);
+struct device_info* alloc_device_info(const uint8_t* stream);
 
 void free_device_info(const struct device_info* dev_info);
 

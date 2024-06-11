@@ -44,12 +44,12 @@ struct storage_info {
     ptp_string_t VolumeLabel;
 } __attribute__((packed));
 
-struct storage_info* alloc_storage_info(const uint8_t* stream, size_t len);
+struct storage_info* alloc_storage_info(const uint8_t* stream);
 
 void free_storage_info(const struct storage_info* si);
 
 ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len);
 
-void free_storage_id_array(ptp_array_t* sia);
+void free_storage_id_array(const ptp_array_t* sia);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
