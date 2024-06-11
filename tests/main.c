@@ -210,17 +210,17 @@ int main(void)
         return 1;
     }
 
-    ptp_array_t* obj_handles = alloc_object_handle_array(buffer, res.length);
+    ptp_array_t* obj_handles = ptp_alloc_object_handle_array(buffer, res.length);
 
     for (int i = 0; i < obj_handles->NumElements; ++i) {
-        ptp_object_handle* oh = (ptp_object_handle*)obj_handles->ArrayEntry + i;
+        ptp_object_handle_t* oh = (ptp_object_handle_t*)obj_handles->ArrayEntry + i;
         printf("%.8X\n", *oh);
     }
 
     printf("%d\n", obj_handles->NumElements);
 
     for (int i = 1; i < obj_handles->NumElements; ++i) {
-        ptp_object_handle* oh = (ptp_object_handle*)obj_handles->ArrayEntry + i;
+        ptp_object_handle_t* oh = (ptp_object_handle_t*)obj_handles->ArrayEntry + i;
         if ((status = ptp_get_object_info(&dev, *oh, buffer, 4096, &res)) < 0) {
             printf("ERROR\n");
             close(fd);
@@ -233,7 +233,7 @@ int main(void)
             return 1;
         }
 
-        struct object_info* oi = alloc_object_info(buffer);
+        struct object_info* oi = ptp_alloc_object_info(buffer);
 
         printf("%.8X\n", oi->StorageID);
         printf("%.4X\n", oi->ObjectFormat);
@@ -267,7 +267,7 @@ int main(void)
             putc(oi->Keywords.StringChars[i], stdout);
         putc('\n', stdout);
 
-        free_object_info(oi);
+        ptp_free_object_info(oi);
 
         /*
         for (int i = 0; i < res.length; ++i)
@@ -276,7 +276,7 @@ int main(void)
         */
     }
 
-    free_object_handle_array(obj_handles);
+    ptp_free_object_handle_array(obj_handles);
 
     ptp_close_session(&dev, &res);
 
