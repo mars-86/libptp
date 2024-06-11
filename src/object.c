@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct object_info* alloc_object_info(const uint8_t* stream)
+struct object_info* ptp_alloc_object_info(const uint8_t* stream)
 {
     struct object_info* __oi = (struct object_info*)malloc(sizeof(struct object_info));
 
@@ -39,11 +39,11 @@ struct object_info* alloc_object_info(const uint8_t* stream)
     return __oi;
 
 err:
-    free_object_info(__oi);
+    ptp_free_object_info(__oi);
     return NULL;
 }
 
-void free_object_info(const struct object_info* oi)
+void ptp_free_object_info(const struct object_info* oi)
 {
     if (oi->Filename.StringChars)
         free(oi->Filename.StringChars);
@@ -60,7 +60,7 @@ void free_object_info(const struct object_info* oi)
     free((struct object_info*)oi);
 }
 
-ptp_array_t* alloc_object_handle_array(const uint8_t* stream, size_t len)
+ptp_array_t* ptp_alloc_object_handle_array(const uint8_t* stream, size_t len)
 {
     ptp_array_t* __sia = (ptp_array_t*)malloc(sizeof(ptp_array_t));
 
@@ -69,20 +69,20 @@ ptp_array_t* alloc_object_handle_array(const uint8_t* stream, size_t len)
 
     int __st_offset = PTP_CONTAINER_DATA_OFFSET;
 
-    __sia->NumElements = (len - PTP_CONTAINER_DATA_OFFSET) / sizeof(ptp_object_handle);
-    __sia->ArrayEntry = (ptp_object_handle*)malloc(__sia->NumElements * sizeof(ptp_object_handle));
+    __sia->NumElements = (len - PTP_CONTAINER_DATA_OFFSET) / sizeof(ptp_object_handle_t);
+    __sia->ArrayEntry = (ptp_object_handle_t*)malloc(__sia->NumElements * sizeof(ptp_object_handle_t));
 
     if (!__sia->ArrayEntry) {
         free((ptp_array_t*)__sia);
         return NULL;
     }
 
-    memcpy(__sia->ArrayEntry, stream + __st_offset, __sia->NumElements * sizeof(ptp_object_handle));
+    memcpy(__sia->ArrayEntry, stream + __st_offset, __sia->NumElements * sizeof(ptp_object_handle_t));
 
     return __sia;
 }
 
-void free_object_handle_array(const ptp_array_t* oa)
+void ptp_free_object_handle_array(const ptp_array_t* oa)
 {
     if (oa->ArrayEntry)
         free(oa->ArrayEntry);

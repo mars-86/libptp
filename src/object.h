@@ -81,7 +81,7 @@ struct object_info2 {
 #define PTP_OBJECT_FORMAT_JP2 0x380F // I JP2 JPEG2000 Baseline File Format
 #define PTP_OBJECT_FORMAT_JPX 0x3810 // I JPX JPEG2000 Extended File Format
 
-typedef uint32_t ptp_object_handle;
+typedef uint32_t ptp_object_handle_t;
 
 struct object_info {
     uint32_t StorageID;
@@ -105,12 +105,12 @@ struct object_info {
     ptp_string_t Keywords;
 } __attribute__((packed));
 
-struct object_info* alloc_object_info(const uint8_t* stream);
+struct object_info* ptp_alloc_object_info(const uint8_t* stream);
 
-void free_object_info(const struct object_info* oi);
+void ptp_free_object_info(const struct object_info* oi);
 
-ptp_array_t* alloc_object_handle_array(const uint8_t* stream, size_t len);
+ptp_array_t* ptp_alloc_object_handle_array(const uint8_t* stream, size_t len);
 
-void free_object_handle_array(const ptp_array_t* oa);
+void ptp_free_object_handle_array(const ptp_array_t* oa);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_OBJECT_INCLUDED_H__
