@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct storage_info* alloc_storage_info(const uint8_t* stream)
+struct storage_info* ptp_alloc_storage_info(const uint8_t* stream)
 {
     struct storage_info* __si = (struct storage_info*)malloc(sizeof(struct storage_info));
 
@@ -31,11 +31,11 @@ struct storage_info* alloc_storage_info(const uint8_t* stream)
     return __si;
 
 err:
-    free_storage_info(__si);
+    ptp_free_storage_info(__si);
     return NULL;
 }
 
-void free_storage_info(const struct storage_info* si)
+void ptp_free_storage_info(const struct storage_info* si)
 {
     if (si->StorageDescription.StringChars)
         free(si->StorageDescription.StringChars);
@@ -46,7 +46,7 @@ void free_storage_info(const struct storage_info* si)
     free((struct storage_info*)si);
 }
 
-ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len)
+ptp_array_t* ptp_alloc_storage_id_array(const uint8_t* stream, size_t len)
 {
     ptp_array_t* __sia = (ptp_array_t*)malloc(sizeof(ptp_array_t));
 
@@ -68,7 +68,7 @@ ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len)
     return __sia;
 }
 
-void free_storage_id_array(const ptp_array_t* sia)
+void ptp_free_storage_id_array(const ptp_array_t* sia)
 {
     if (sia->ArrayEntry)
         free(sia->ArrayEntry);

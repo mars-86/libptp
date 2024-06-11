@@ -134,7 +134,7 @@ int main(void)
         return 1;
     }
 
-    ptp_array_t* stid = alloc_storage_id_array(buffer, res.length);
+    ptp_array_t* stid = ptp_alloc_storage_id_array(buffer, res.length);
 
     ptp_storage_id_t store_id;
     for (int i = 0; i < stid->NumElements; ++i) {
@@ -147,7 +147,7 @@ int main(void)
         }
     }
 
-    free_storage_id_array(stid);
+    ptp_free_storage_id_array(stid);
 
     for (int i = 0; i < res.length; ++i)
         printf("%.2X", buffer[i]);
@@ -165,7 +165,7 @@ int main(void)
         return 1;
     }
 
-    struct storage_info* si = alloc_storage_info(buffer);
+    struct storage_info* si = ptp_alloc_storage_info(buffer);
 
     printf("%.4X\n", si->StorageType);
     printf("%.4X\n", si->FilesystemType);
@@ -182,7 +182,7 @@ int main(void)
         putc(si->VolumeLabel.StringChars[i], stdout);
     putc('\n', stdout);
 
-    free_storage_info(si);
+    ptp_free_storage_info(si);
 
     if ((status = ptp_get_num_objects(&dev, ptp_build_storage_id(&store_id), 0, 0, &res, &rparams)) < 0) {
         printf("ERROR\n");

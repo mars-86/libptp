@@ -59,12 +59,12 @@ inline uint8_t ptp_has_storage_logical(ptp_storage_id_t* sid)
     return sid->logical_id != 0;
 }
 
-struct storage_info* alloc_storage_info(const uint8_t* stream);
+struct storage_info* ptp_alloc_storage_info(const uint8_t* stream);
 
-void free_storage_info(const struct storage_info* si);
+void ptp_free_storage_info(const struct storage_info* si);
 
-ptp_array_t* alloc_storage_id_array(const uint8_t* stream, size_t len);
+ptp_array_t* ptp_alloc_storage_id_array(const uint8_t* stream, size_t len);
 
-void free_storage_id_array(const ptp_array_t* sia);
+void ptp_free_storage_id_array(const ptp_array_t* sia);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_STORAGE_INCLUDED_H__
