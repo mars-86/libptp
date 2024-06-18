@@ -43,6 +43,27 @@
 #define PTP_DEVICE_PROP_CODE_ARTIST 0x501E
 #define PTP_DEVICE_PROP_CODE_COPYRIGHT_INFO 0x501F
 
+// prop codes data types
+
+#define PTP_DEVICE_PROP_CODE_BATTERY_LEVEL_TYPE uint8_t
+#define PTP_DEVICE_PROP_CODE_FUNCTIONAL_MODE_TYPE uint16_t
+#define PTP_DEVICE_PROP_CODE_IMAGE_SIZE_TYPE ptp_string_t
+
+struct ptp_dev_prop_range {
+    uint8_t MinimumValue;
+    uint8_t MaximumValue;
+    uint8_t StepSize;
+} __attribute__((packed));
+
+typedef struct ptp_dev_prop_range ptp_dev_prop_range_t;
+
+struct ptp_dev_prop_enum {
+    uint16_t NumberOfValues;
+    void* SupportedValue;
+} __attribute__((packed));
+
+typedef struct ptp_dev_prop_enum ptp_dev_prop_enum_t;
+
 struct device_info {
     uint16_t StandardVersion;
     uint32_t VendorExtensionID;

@@ -346,7 +346,7 @@ int main(void)
         return 1;
     }
 
-    for (int i = 0; i < res.length || i < 4096; ++i)
+    for (int i = 0; i < res.length && i < 4096; ++i)
         printf("%.2X", buffer[i]);
     putc('\n', stdout);
 */
@@ -390,19 +390,38 @@ int main(void)
             goto err;
         }
     */
-/*
-    if ((status = ptp_delete_object(&dev, 0x24, 0, &res))) {
-        perror("DELETE OBJECT\n");
+    /*
+        if ((status = ptp_delete_object(&dev, 0x24, 0, &res))) {
+            perror("DELETE OBJECT\n");
+            close(fd);
+            return 1;
+        }
+
+        if (res.code != PTP_RESPONSE_OK) {
+            printf("SEND OBJECT\n");
+            printf("%s\n", ptp_get_error(res.code));
+            goto err;
+        }
+    */
+
+    if ((status = ptp_get_device_prop_desc(&dev, PTP_DEVICE_PROP_CODE_BATTERY_LEVEL, buffer, 4096, &res))) {
+        perror("DEVICE PROP DESC\n");
         close(fd);
         return 1;
     }
 
     if (res.code != PTP_RESPONSE_OK) {
-        printf("SEND OBJECT\n");
+        printf("DEVICE PROP DESC\n");
         printf("%s\n", ptp_get_error(res.code));
         goto err;
     }
-*/
+
+    printf("%d\n", res.length);
+
+    for (int i = 0; i < res.length && i < 4096; ++i)
+        printf("%.2X", buffer[i]);
+    putc('\n', stdout);
+
 err:
 
     ptp_close_session(&dev, &res);
