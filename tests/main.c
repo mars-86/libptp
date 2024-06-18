@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define DEV_USB_DIR "/dev/bus/usb"
-#define DEVICE "005"
+#define DEVICE "006"
 
 int main(void)
 {
@@ -377,9 +377,22 @@ int main(void)
     // ptp_free_object_handle_array(obj_handles);
 
     uint8_t msg[] = { 0x48, 0x65, 0x6C, 0x6C, 0x6F };
+    /*
+        if ((status = ptp_send_object(&dev, msg, 5, &res))) {
+            perror("SEND OBJECT\n");
+            close(fd);
+            return 1;
+        }
+
+        if (res.code != PTP_RESPONSE_OK) {
+            printf("SEND OBJECT\n");
+            printf("%s\n", ptp_get_error(res.code));
+            goto err;
+        }
+    */
 /*
-    if ((status = ptp_send_object(&dev, msg, 5, &res))) {
-        perror("SEND OBJECT\n");
+    if ((status = ptp_delete_object(&dev, 0x24, 0, &res))) {
+        perror("DELETE OBJECT\n");
         close(fd);
         return 1;
     }
@@ -391,6 +404,7 @@ int main(void)
     }
 */
 err:
+
     ptp_close_session(&dev, &res);
 
     if (usb_release_interface(dev.fd, 0x00) < 0) {
