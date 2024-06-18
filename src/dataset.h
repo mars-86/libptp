@@ -55,16 +55,18 @@ struct ptp_dev_prop_range {
     uint8_t StepSize;
 } __attribute__((packed));
 
-typedef struct ptp_dev_prop_range ptp_dev_prop_range_t;
-
 struct ptp_dev_prop_enum {
     uint16_t NumberOfValues;
     void* SupportedValue;
 } __attribute__((packed));
 
-typedef struct ptp_dev_prop_enum ptp_dev_prop_enum_t;
+struct ptp_dev_prop_dataset {
+    uint8_t form;
+    struct ptp_dev_prop_range* prop_range;
+    struct ptp_dev_prop_enum* prop_enum;
+};
 
-struct device_info {
+struct ptp_device_info {
     uint16_t StandardVersion;
     uint32_t VendorExtensionID;
     uint16_t VendorExtensionVersion;
@@ -81,8 +83,12 @@ struct device_info {
     ptp_string_t SerialNumber;
 } __attribute__((packed));
 
-struct device_info* ptp_alloc_device_info(const uint8_t* stream);
+struct ptp_device_info* ptp_alloc_device_info(const uint8_t* stream);
 
-void ptp_free_device_info(const struct device_info* dev_info);
+void ptp_free_device_info(const struct ptp_device_info* dev_info);
+
+struct ptp_dev_prop_dataset* ptp_alloc_dev_prop_dataset(const uint8_t* stream);
+
+void ptp_free_dev_prop_dataset(const struct ptp_dev_prop_dataset* dev_prop_ds);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_DATASET_INCLUDED_H__

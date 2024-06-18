@@ -32,7 +32,7 @@ struct ptp_string_datetime {
     uint8_t mm[2]; // min
     uint8_t ss[4]; // sec + sec tenths (optional)
     uint8_t TZ[5]; // timezone (optional)
-};
+} __attribute__((packed));
 
 typedef struct ptp_string_datetime ptp_string_datetime_t;
 

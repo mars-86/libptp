@@ -5,16 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct device_info* ptp_alloc_device_info(const uint8_t* stream)
+struct ptp_device_info* ptp_alloc_device_info(const uint8_t* stream)
 {
-    struct device_info* __di = (struct device_info*)malloc(sizeof(struct device_info));
+    struct ptp_device_info* __di = (struct ptp_device_info*)malloc(sizeof(struct ptp_device_info));
 
     if (!__di)
         return NULL;
 
     int __st_offset = PTP_CONTAINER_DATA_OFFSET;
 
-    memset(__di, 0, sizeof(struct device_info));
+    memset(__di, 0, sizeof(struct ptp_device_info));
 
     // copy first 8 bytes StandardVersion, VendorExtensionID, VendorExtensionVersion;
     memcpy(__di, stream + __st_offset, 8);
@@ -70,7 +70,7 @@ err:
     return NULL;
 }
 
-void ptp_free_device_info(const struct device_info* di)
+void ptp_free_device_info(const struct ptp_device_info* di)
 {
     if (di->VendorExtensionDesc.StringChars)
         free(di->VendorExtensionDesc.StringChars);
@@ -102,5 +102,5 @@ void ptp_free_device_info(const struct device_info* di)
     if (di->SerialNumber.StringChars)
         free(di->SerialNumber.StringChars);
 
-    free((struct device_info*)di);
+    free((struct ptp_device_info*)di);
 }
