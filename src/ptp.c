@@ -432,12 +432,15 @@ int ptp_send_object(ptp_dev_t* dev, void* object, uint32_t len, ptp_res_t* res)
     __ptpdata.header.Code = PTP_REQUEST_SEND_OBJECT;
     __ptpdata.header.TransacionID = transaction_id;
 
-    // TODO: fix this to accept object parameter
-    struct object_info2 oi2 = { 0 };
+    __ptpdata.payload = (uint8_t*)object;
 
-    __ptpdata.payload = (uint8_t*)&oi2;
+    uint8_t* __data_stream = ptp_data_container_to_stream(&__ptpdata);
 
-    return __handle_request(dev, &__ptpdata, NULL, 0, res, NULL, RESPONSE_PHASE);
+    int status = __handle_request(dev, __data_stream, NULL, 0, res, NULL, RESPONSE_PHASE);
+
+    free(__data_stream);
+
+    return status;
 }
 
 int ptp_initiate_capture(ptp_dev_t* dev, uint32_t storage_id, uint32_t object_format_code, ptp_res_t* res)
