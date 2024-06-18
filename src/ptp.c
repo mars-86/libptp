@@ -301,8 +301,6 @@ int ptp_get_object_info(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, u
     printf("GET OBJECT INFO\n");
 #endif
 
-    printf("%d\n", __ptpcmd.header.ContaierLength);
-
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
 
@@ -321,8 +319,6 @@ int ptp_get_object(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, uint32
 #ifdef __DEBUG
     printf("GET OBJECT\n");
 #endif
-
-    printf("%d\n", __ptpcmd.header.ContaierLength);
 
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
@@ -346,7 +342,7 @@ int ptp_get_thumb(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, uint32_
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
 
-int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_format_code, uint8_t* data, uint32_t len, ptp_res_t* res)
+int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_format_code, ptp_res_t* res)
 {
     int nparams = 2;
     struct ptp_cmd_container __ptpcmd = { 0 };
@@ -363,7 +359,7 @@ int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_fo
     printf("GET DELETE OBJECT\n");
 #endif
 
-    return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
+    return __handle_request(dev, &__ptpcmd, NULL, 0, res, NULL, RESPONSE_PHASE);
 }
 
 int ptp_send_object_info(ptp_dev_t* dev, uint32_t storage_id, uint32_t parent_object_handle, struct object_info* obj_info, uint32_t len, ptp_res_t* res, ptp_res_params_t* rparams)

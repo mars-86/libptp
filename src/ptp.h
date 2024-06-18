@@ -335,7 +335,7 @@ int ptp_get_thumb(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, uint32_
  * DeleteObject operations should be issued on each object or sub-association individually.
  */
 
-int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_format_code, uint8_t* data, uint32_t len, ptp_res_t* res);
+int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_format_code, ptp_res_t* res);
 
 /*
  * SendObjectInfo
