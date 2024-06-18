@@ -1,6 +1,7 @@
 #include "ptp.h"
 #include "object.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -53,6 +54,9 @@ struct ptp_data_container {
 static int __send_request(int fd, uint8_t endp_in, uint8_t endp_out, const uint8_t* req, uint32_t len, uint8_t* data, ptp_res_t* res, ptp_res_params_t* rparams, int next_phase)
 {
     int res_block = 0, offset = 0, sent_bytes = 0;
+    for (int i = 0; i < len; ++i)
+        printf("%.2X", req[i]);
+    putc('\n', stdout);
     if ((sent_bytes = usb_bulk_send(fd, endp_out, (void*)req, len)) < 0)
         return -1;
 
@@ -74,7 +78,12 @@ static int __send_request(int fd, uint8_t endp_in, uint8_t endp_out, const uint8
                             res->length = RESPONSE_LENGTH_MASK(data);
 #ifdef __DEBUG
                         printf("\nEND\n");
+
+                        for (int i = 0; i < recv_bytes; ++i)
+                            printf("%.2X", __rbuffer[i]);
+                        putc('\n', stdout);
 #endif
+
                         break;
                     }
                     recv_bytes = usb_bulk_recv(fd, endp_in, __rbuffer, sizeof(__rbuffer));
@@ -83,7 +92,13 @@ static int __send_request(int fd, uint8_t endp_in, uint8_t endp_out, const uint8
             case PTP_CONTAINER_TYPE_RESPONSE_BLOCK:
 #ifdef __DEBUG
                 printf("RESPONSE BLOCK RECEIVED\n");
+
+                printf("RESPONSE\n");
+                for (int i = 0; i < recv_bytes; ++i)
+                    printf("%.2X", __rbuffer[i]);
+                putc('\n', stdout);
 #endif
+
                 if (res)
                     res->code = RESPONSE_CODE_MASK(__rbuffer);
                 if (rparams)
@@ -104,6 +119,12 @@ static int __handle_request(ptp_dev_t* dev, void* container, uint8_t* data, uint
     int __bytes_len = header->ContaierLength;
     uint8_t __rstream[RESPONSE_BUFFER_LEN];
 
+    for (int i = 0; i < __bytes_len; ++i) {
+        uint8_t* __c = (uint8_t*)(container + i);
+        printf("%.2X", *__c);
+    }
+    putc('\n', stdout);
+
     int __ret = __send_request(dev->fd, dev->endp_in, dev->endp_out, (const uint8_t*)container, __bytes_len, __rstream, res, rparams, next_phase);
 
     if (data && __ret == 0) {
@@ -122,6 +143,16 @@ static int __handle_request(ptp_dev_t* dev, void* container, uint8_t* data, uint
 static inline int __attribute__((always_inline)) __get_transaction_id(void)
 {
     return 1 + (rand() % (RAND_MAX - 1));
+}
+
+static uint8_t* ptp_data_container_to_stream(const struct ptp_data_container* dc)
+{
+    uint8_t* __stream = (uint8_t*)malloc(dc->header.ContaierLength * sizeof(uint8_t));
+
+    memcpy(__stream, dc, sizeof(struct ptp_header));
+    memcpy(__stream + sizeof(struct ptp_header), dc->payload, dc->header.ContaierLength - sizeof(struct ptp_header));
+
+    return __stream;
 }
 
 int ptp_get_device_info(ptp_dev_t* dev, uint8_t* data, uint32_t len, ptp_res_t* res)
@@ -270,6 +301,8 @@ int ptp_get_object_info(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, u
     printf("GET OBJECT INFO\n");
 #endif
 
+    printf("%d\n", __ptpcmd.header.ContaierLength);
+
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
 
@@ -288,6 +321,8 @@ int ptp_get_object(ptp_dev_t* dev, uint32_t object_handle, uint8_t* data, uint32
 #ifdef __DEBUG
     printf("GET OBJECT\n");
 #endif
+
+    printf("%d\n", __ptpcmd.header.ContaierLength);
 
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
@@ -331,7 +366,7 @@ int ptp_delete_object(ptp_dev_t* dev, uint32_t object_handle, uint32_t object_fo
     return __handle_request(dev, &__ptpcmd, data, len, res, NULL, RESPONSE_PHASE);
 }
 
-int ptp_send_object_info(ptp_dev_t* dev, uint32_t storage_id, uint32_t object_handle, struct object_info* obj_info, uint32_t len, ptp_res_t* res, ptp_res_params_t* rparams)
+int ptp_send_object_info(ptp_dev_t* dev, uint32_t storage_id, uint32_t parent_object_handle, struct object_info* obj_info, uint32_t len, ptp_res_t* res, ptp_res_params_t* rparams)
 {
     int nparams = 2;
     struct ptp_cmd_container __ptpcmd = { 0 };
@@ -343,7 +378,7 @@ int ptp_send_object_info(ptp_dev_t* dev, uint32_t storage_id, uint32_t object_ha
     __ptpcmd.header.TransacionID = transaction_id;
 
     __ptpcmd.payload.Parameter1 = storage_id;
-    __ptpcmd.payload.Parameter2 = object_handle;
+    __ptpcmd.payload.Parameter2 = parent_object_handle;
 
 #ifdef __DEBUG
     printf("SEND OBJECT INFO\n");
@@ -354,17 +389,22 @@ int ptp_send_object_info(ptp_dev_t* dev, uint32_t storage_id, uint32_t object_ha
 
     struct ptp_data_container __ptpdata = { 0 };
 
-    __ptpdata.header.ContaierLength = PTP_DATA_REQUEST_LEN(sizeof(struct object_info2));
+    __ptpdata.header.ContaierLength = PTP_DATA_REQUEST_LEN(len);
     __ptpdata.header.ContainerType = PTP_CONTAINER_TYPE_DATA_BLOCK;
     __ptpdata.header.Code = PTP_REQUEST_SEND_OBJECT_INFO;
     __ptpdata.header.TransacionID = transaction_id;
 
-    // TODO: fix this to accept object_info parameter
-    struct object_info2 oi2 = { 0 };
+    __ptpdata.payload = ptp_object_info_to_stream(obj_info);
 
-    __ptpdata.payload = (uint8_t*)&oi2;
+    uint8_t* __data_stream = ptp_data_container_to_stream(&__ptpdata);
 
-    return __handle_request(dev, &__ptpdata, NULL, 0, res, rparams, RESPONSE_PHASE);
+    free(__ptpdata.payload);
+
+    int status = __handle_request(dev, __data_stream, NULL, 0, res, rparams, RESPONSE_PHASE);
+
+    free(__data_stream);
+
+    return status;
 }
 
 int ptp_send_object(ptp_dev_t* dev, void* object, uint32_t len, ptp_res_t* res)

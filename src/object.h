@@ -105,7 +105,11 @@ struct object_info {
     ptp_string_t Keywords;
 } __attribute__((packed));
 
-struct object_info* ptp_alloc_object_info(const uint8_t* stream);
+struct object_info* ptp_alloc_object_info(const char* filename, const char* capture_date, const char* modification_date, const char* keywords, size_t* obj_size);
+
+uint8_t* ptp_object_info_to_stream(const struct object_info* oi);
+
+struct object_info* ptp_stream_to_object_info(const uint8_t* stream);
 
 void ptp_free_object_info(const struct object_info* oi);
 
