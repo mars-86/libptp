@@ -1,11 +1,12 @@
 #include "../src/ptp.h"
 #include "assert.h"
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 
 #define DEV_USB_DIR "/dev/bus/usb"
-#define DEVICE "025"
+#define DEVICE "005"
 
 int main(void)
 {
@@ -13,6 +14,19 @@ int main(void)
     ptp_res_t res;
     ptp_res_params_t rparams;
     unsigned char buffer[4096];
+
+    FILE* f;
+
+    if (!(f = fopen(DEV_USB_DIR "/003/" DEVICE, "rb"))) {
+        printf("FOPEN ERROR\n");
+        return 1;
+    }
+
+    int c;
+    while ((c = fgetc(f)) != EOF)
+        printf("%.2X", c);
+
+    fclose(f);
 
     int fd = open(DEV_USB_DIR "/003/" DEVICE, O_RDWR);
 
@@ -33,8 +47,24 @@ int main(void)
 
     int status;
 
-    if ((status = ptp_open_session(&dev, 2, &res)) < 0) {
-        printf("ERROR\n");
+    if (usb_detach_interface(dev.fd, 0x00) < 0) {
+        printf("DETACH INTERFACE ERROR\n");
+        return 1;
+    }
+
+    if (usb_claim_interface(dev.fd, 0x00) < 0) {
+        printf("CLAIM INTERFACE ERROR\n");
+        return 1;
+    }
+
+    if ((status = ptp_open_session(&dev, 5, &res)) < 0) {
+        perror("OPEN SESSION");
+
+        if (usb_release_interface(dev.fd, 0x00) < 0) {
+            printf("RELEASE INTERFACE ERROR\n");
+            return 1;
+        }
+
         close(fd);
         return 1;
     }
@@ -184,7 +214,7 @@ int main(void)
 
     ptp_free_storage_info(si);
 
-    if ((status = ptp_get_num_objects(&dev, ptp_build_storage_id(&store_id), 0, 0, &res, &rparams)) < 0) {
+    if ((status = ptp_get_num_objects(&dev, ptp_build_storage_id(&store_id), 0, PTP_STORAGE_HANDLE_ROOT, &res, &rparams)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;
@@ -196,9 +226,13 @@ int main(void)
         return 1;
     }
 
+    for (int i = 0; i < res.length; ++i)
+        printf("%.2X", buffer[i]);
+    putc('\n', stdout);
+
     printf("NOBJS: %.2X\n", rparams.Parameter1);
 
-    if ((status = ptp_get_object_handles(&dev, ptp_build_storage_id(&store_id), 0, PTP_OBJECT_ASSOCIATION_ROOT, buffer, 4096, &res)) < 0) {
+    if ((status = ptp_get_object_handles(&dev, ptp_build_storage_id(&store_id), 0, PTP_STORAGE_HANDLE_ROOT, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");
         close(fd);
         return 1;
@@ -233,7 +267,13 @@ int main(void)
             return 1;
         }
 
-        struct object_info* oi = ptp_alloc_object_info(buffer);
+        for (int i = 0; i < res.length; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+
+        printf("LEN: %d\n", res.length - 12);
+
+        struct object_info* oi = ptp_stream_to_object_info(buffer);
 
         printf("%.8X\n", oi->StorageID);
         printf("%.4X\n", oi->ObjectFormat);
@@ -268,17 +308,95 @@ int main(void)
         putc('\n', stdout);
 
         ptp_free_object_info(oi);
-
-        /*
-        for (int i = 0; i < res.length; ++i)
-            printf("%c", buffer[i]);
-        putc('\n', stdout);
-        */
     }
 
-    ptp_free_object_handle_array(obj_handles);
+    /*
+        if ((status = ptp_get_object(&dev, 0xE, buffer, 4096, &res)) < 0) {
+            printf("ERROR\n");
+            ptp_free_object_handle_array(obj_handles);
+            close(fd);
+            return 1;
+        }
 
+        if (res.code != PTP_RESPONSE_OK) {
+            printf("%s\n", ptp_get_error(res.code));
+            close(fd);
+            ptp_free_object_handle_array(obj_handles);
+            return 1;
+        }
+    */
+
+    //     printf("LEN: %d\n", res.length);
+    /*
+        for (int i = 0; i < res.length || i < 4096; ++i)
+            printf("%.2X", buffer[i]);
+        putc('\n', stdout);
+    */
+
+    /*
+    if ((status = ptp_get_thumb(&dev, 0x19, buffer, 4096, &res)) < 0) {
+        printf("ERROR\n");
+        close(fd);
+        return 1;
+    }
+
+    if (res.code != PTP_RESPONSE_OK) {
+        printf("%s\n", ptp_get_error(res.code));
+        close(fd);
+        return 1;
+    }
+
+    for (int i = 0; i < res.length || i < 4096; ++i)
+        printf("%.2X", buffer[i]);
+    putc('\n', stdout);
+*/
+    size_t __oisize;
+    struct object_info* oi = ptp_alloc_object_info("Hello.txt", "20240404T185334.", "20240404T185334.", NULL, &__oisize);
+
+    // oi->StorageID = 0;
+    oi->ObjectFormat = PTP_OBJECT_FORMAT_TEXT;
+    oi->ObjectCompressedSize = 0x5;
+    // oi->ImageBitDepth = 0x0000018;
+
+    printf("OI SIZE %ld\n", __oisize);
+    /*
+        if ((status = ptp_send_object_info(&dev, 0x10001, PTP_STORAGE_HANDLE_ROOT, oi, __oisize, &res, &rparams))) {
+            perror("SEND OBJECT INFO\n");
+            close(fd);
+            return 1;
+        }
+
+        if (res.code != PTP_RESPONSE_OK) {
+            printf("OBJECT INFO\n");
+            printf("%s\n", ptp_get_error(res.code));
+            goto err;
+        }
+    */
+    ptp_free_object_info(oi);
+
+    // ptp_free_object_handle_array(obj_handles);
+
+    uint8_t msg[] = { 0x48, 0x65, 0x6C, 0x6C, 0x6F };
+/*
+    if ((status = ptp_send_object(&dev, msg, 5, &res))) {
+        perror("SEND OBJECT\n");
+        close(fd);
+        return 1;
+    }
+
+    if (res.code != PTP_RESPONSE_OK) {
+        printf("SEND OBJECT\n");
+        printf("%s\n", ptp_get_error(res.code));
+        goto err;
+    }
+*/
+err:
     ptp_close_session(&dev, &res);
+
+    if (usb_release_interface(dev.fd, 0x00) < 0) {
+        printf("RELEASE INTERFACE ERROR\n");
+        return 1;
+    }
 
     if (res.code != PTP_RESPONSE_OK) {
         printf("%s\n", ptp_get_error(res.code));
