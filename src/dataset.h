@@ -44,21 +44,43 @@
 #define PTP_DEVICE_PROP_CODE_COPYRIGHT_INFO 0x501F
 
 // prop codes data types
+#define PTP_DEVICE_PROP_FORM_NONE 0x00
+#define PTP_DEVICE_PROP_FORM_RANGE 0x01
+#define PTP_DEVICE_PROP_FORM_ENUM 0x02
 
-#define PTP_DEVICE_PROP_CODE_BATTERY_LEVEL_TYPE uint8_t
-#define PTP_DEVICE_PROP_CODE_FUNCTIONAL_MODE_TYPE uint16_t
-#define PTP_DEVICE_PROP_CODE_IMAGE_SIZE_TYPE ptp_string_t
-
+// TODO review this packed struct
 struct ptp_dev_prop_range {
-    uint8_t MinimumValue;
-    uint8_t MaximumValue;
-    uint8_t StepSize;
-} __attribute__((packed));
+    void* MinimumValue;
+    void* MaximumValue;
+    void* StepSize;
+};
 
+// TODO review this packed struct
 struct ptp_dev_prop_enum {
     uint16_t NumberOfValues;
     void* SupportedValue;
-} __attribute__((packed));
+};
+
+/*
+ * Device Property Describing Dataset
+ *
+ * Device Property Code
+ * DataType
+ * GetSet
+ * Factory Default
+ * Current Value
+ * Form Flag
+ * FORM
+ */
+struct ptp_dev_prop_desc {
+    uint16_t DevicePropertyCode;
+    uint16_t DataType;
+    uint8_t GetSet;
+    uint8_t FormFlag; // re-arranged form flag for less padding
+    void* FactoryDefaultValue;
+    void* DefaultValue;
+    void* FORM;
+};
 
 struct ptp_dev_prop_dataset {
     uint8_t form;
@@ -66,6 +88,7 @@ struct ptp_dev_prop_dataset {
     struct ptp_dev_prop_enum* prop_enum;
 };
 
+// TODO review this packed struct
 struct ptp_device_info {
     uint16_t StandardVersion;
     uint32_t VendorExtensionID;
@@ -87,8 +110,8 @@ struct ptp_device_info* ptp_alloc_device_info(const uint8_t* stream);
 
 void ptp_free_device_info(const struct ptp_device_info* dev_info);
 
-struct ptp_dev_prop_dataset* ptp_alloc_dev_prop_dataset(const uint8_t* stream);
+struct ptp_dev_prop_desc* ptp_alloc_dev_prop_desc(const uint8_t* stream);
 
-void ptp_free_dev_prop_dataset(const struct ptp_dev_prop_dataset* dev_prop_ds);
+void ptp_free_dev_prop_desc(const struct ptp_dev_prop_desc* dev_prop_desc);
 
 #endif // __PICTURE_TRANSFER_PROTOCOL_DATASET_INCLUDED_H__

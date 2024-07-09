@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define DEV_USB_DIR "/dev/bus/usb"
-#define DEVICE "006"
+#define DEVICE "015"
 
 int main(void)
 {
@@ -151,8 +151,6 @@ int main(void)
     putc('\n', stdout);
 
     ptp_free_device_info(di);
-
-    goto err;
 
     if ((status = ptp_get_storage_id(&dev, buffer, 4096, &res)) < 0) {
         printf("ERROR\n");

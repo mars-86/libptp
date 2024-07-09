@@ -38,9 +38,10 @@
 #define PTP_DATA_TYPE_AUINT128 0x400A // AUINT128 Array of Unsigned 128 bit integers
 #define PTP_DATA_TYPE_STR 0xFFFF // STR Variable-length Unicode String
 
+// TODO review this packed struct
 struct ptp_string {
-    uint8_t NumChars;
     uint16_t* StringChars; // each char is 2 bytes
+    uint8_t NumChars;
 } __attribute__((packed));
 
 typedef struct ptp_string ptp_string_t;
@@ -59,9 +60,10 @@ struct ptp_string_datetime {
 
 typedef struct ptp_string_datetime ptp_string_datetime_t;
 
+// TODO review this packed struct
 struct ptp_array {
-    uint32_t NumElements;
     void* ArrayEntry;
+    uint32_t NumElements;
 } __attribute__((packed));
 
 typedef struct ptp_array ptp_array_t;
