@@ -5,32 +5,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-struct object_info2 {
-    uint32_t StorageID;
-    uint16_t ObjectFormat;
-    uint16_t ProtectionStatus;
-    uint32_t ObjectCompressedSize;
-    uint16_t ThumbFormat;
-    uint32_t ThumbCompressedSize;
-    uint32_t ThumbPixWidth;
-    uint32_t ThumbPixHeight;
-    uint32_t ImagePixWidth;
-    uint32_t ImagePixHeight;
-    uint32_t ImageBitDepth;
-    uint32_t ParentObject;
-    uint16_t AssociationType;
-    uint32_t AssociationDesc;
-    uint32_t SequenceNumber;
-    uint8_t flen;
-    uint16_t f;
-    uint8_t clen;
-    uint16_t c;
-    uint8_t mlen;
-    uint16_t m;
-    uint8_t klen;
-    uint16_t k;
-} __attribute__((packed));
-
 #define PTP_OBJECT_PROTECTION_NO_PROTECTION 0x0000
 #define PTP_OBJECT_PROTECTION_READ_ONLY 0x0001
 
@@ -83,6 +57,7 @@ struct object_info2 {
 
 typedef uint32_t ptp_object_handle_t;
 
+// TODO review this packed struct
 struct object_info {
     uint32_t StorageID;
     uint16_t ObjectFormat;

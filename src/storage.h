@@ -38,6 +38,7 @@ struct ptp_storage_id {
 
 typedef struct ptp_storage_id ptp_storage_id_t;
 
+// TODO review this packed struct
 struct storage_info {
     uint16_t StorageType;
     uint16_t FilesystemType;
